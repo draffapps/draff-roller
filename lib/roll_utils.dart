@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:roller/saved_roll.dart';
 
 int getDie(int size, {int reRollLessThan = 0}) {
   var roll = Random().nextInt(size) + 1;
@@ -9,11 +10,17 @@ int getDie(int size, {int reRollLessThan = 0}) {
       : getDie(size, reRollLessThan: reRollLessThan);
 }
 
-void rollIt(int numberOfDice, int dieSize, String symbol, int bonus,
-    Function addToHistory,
-    {String? description}) {
+void rollIt(SavedRoll roll, Function addToHistory) {
+  var SavedRoll(
+    :numberOfDice,
+    :dieSize,
+    :symbol,
+    :bonus,
+    :description,
+    :extra
+  ) = roll;
   List<Widget> entry = [];
-  if (description != null) {
+  if (description != '') {
     entry.add(Text(
       description,
       style: const TextStyle(
@@ -30,11 +37,36 @@ void rollIt(int numberOfDice, int dieSize, String symbol, int bonus,
   String rollInfo = ': ';
   int sum = bonus;
   if (symbol == '-') sum *= -1;
-  for (int walker = 0; walker < numberOfDice; walker++) {
+  if (extra != 'A' && extra != 'D') {
+    for (int walker = 0; walker < numberOfDice; walker++) {
+      int dieRoll = getDie(dieSize);
+      if (walker > 0) rollInfo += ' + ';
+      rollInfo += '$dieRoll ';
+      sum += dieRoll;
+    }
+  } else {
     int dieRoll = getDie(dieSize);
-    if (walker > 0) rollInfo += ' + ';
-    rollInfo += '$dieRoll ';
-    sum += dieRoll;
+    int dieRoll2 = getDie(dieSize);
+
+    int keep = extra == 'A' ? max(dieRoll, dieRoll2) : min(dieRoll, dieRoll2);
+    sum += keep;
+    int discard = dieRoll2 + dieRoll - keep;
+    entry.add(const Text('('));
+    entry.add(Text('$dieRoll',
+        style: TextStyle(
+            decoration: dieRoll == keep
+                ? TextDecoration.none
+                : TextDecoration.lineThrough)));
+
+    entry.add(const Text(' '));
+
+    entry.add(Text('$dieRoll2',
+        style: TextStyle(
+            decoration: dieRoll2 == discard
+                ? TextDecoration.lineThrough
+                : TextDecoration.none)));
+
+    entry.add(const Text(')'));
   }
 
   rollInfo += '$symbol $bonus = ';

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:roller/SavedRoll.dart';
+import 'package:roller/saved_roll.dart';
 import 'package:roller/roll_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,10 +27,10 @@ class MyApp extends StatelessWidget {
   }
 }
 
-List<int> dieList = [20, 4, 6, 8, 10, 12, 100];
+List<String> dieList = ['20', '4', '6', '8', '10', '12', '100', '20A', '20D'];
 
 class DieDropDown extends StatefulWidget {
-  final Function(int value) notifyParent;
+  final Function(String value) notifyParent;
   const DieDropDown({Key? key, required this.notifyParent}) : super(key: key);
 
   @override
@@ -38,20 +38,19 @@ class DieDropDown extends StatefulWidget {
 }
 
 class _DieDropDownState extends State<DieDropDown> {
-  int dropdownValue = dieList.first;
+  String dropdownValue = dieList.first;
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<int>(
+    return DropdownButton<String>(
       value: dropdownValue,
-      // icon: const Icon(Icons.arrow_downward),
       elevation: 16,
-      style: const TextStyle(color: Colors.deepPurple),
+      style: TextStyle(color: Theme.of(context).colorScheme.primary),
       underline: Container(
         height: 2,
-        color: Colors.deepPurpleAccent,
+        color: Theme.of(context).colorScheme.onPrimary,
       ),
-      onChanged: (int? value) {
+      onChanged: (String? value) {
         if (value == null) return;
         // This is called when the user selects an item.
         setState(() {
@@ -59,8 +58,8 @@ class _DieDropDownState extends State<DieDropDown> {
         });
         widget.notifyParent(value);
       },
-      items: dieList.map<DropdownMenuItem<int>>((int value) {
-        return DropdownMenuItem<int>(
+      items: dieList.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
           value: value,
           child: Text('D$value'),
         );
@@ -94,6 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<SavedRoll> savedRolls = [];
   final numberOfDiceController = TextEditingController(text: '1');
   final bonusController = TextEditingController(text: '0');
+  String extra = '';
 
   void _loadSavedRolls() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -110,10 +110,17 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _checkDieToExtra() {
+    if (extra != '' && numberOfDiceController.text != '1') {
+      numberOfDiceController.text = '1';
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _loadSavedRolls();
+    numberOfDiceController.addListener(_checkDieToExtra);
   }
 
   void _addSavedRoll(SavedRoll savedRoll) async {
@@ -171,15 +178,15 @@ class _MyHomePageState extends State<MyHomePage> {
               child: const Text('Save'),
               onPressed: () {
                 if (nameController.text.isEmpty) return;
-                _addSavedRoll(SavedRoll(
+                SavedRoll roll = SavedRoll(
                     nameController.text,
                     int.parse(numberOfDiceController.text),
                     currentDie,
                     symbol,
-                    int.parse(bonusController.text)));
-                rollIt(int.parse(numberOfDiceController.text), currentDie,
-                    symbol, int.parse(bonusController.text), _addToHistory,
-                    description: nameController.text);
+                    int.parse(bonusController.text),
+                    extra: extra);
+                _addSavedRoll(roll);
+                rollIt(roll, _addToHistory);
                 Navigator.of(context).pop();
               },
             ),
@@ -228,9 +235,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Expanded(
                             child: OutlinedButton(
                                 onPressed: () {
-                                  rollIt(e.numberOfDice, e.dieSize, e.symbol,
-                                      e.bonus, _addToHistory,
-                                      description: e.description);
+                                  rollIt(e, _addToHistory);
                                   Navigator.of(context).pop();
                                 },
                                 child: Text(
@@ -262,7 +267,28 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _setDieSize(int dieSize) {
+  void _setDieSize(String dieInfo) {
+    String advantageDisadvantage = '';
+    int dieSize = 0;
+
+    if (dieInfo.length == 3) {
+      if (dieInfo == '100') {
+        dieSize = 100;
+      } else {
+        if (dieInfo.endsWith('A')) {
+          dieSize = 20;
+          advantageDisadvantage = 'A';
+        } else {
+          dieSize = 20;
+          advantageDisadvantage = 'D';
+        }
+        if (numberOfDiceController.text != '1') {
+          numberOfDiceController.text = '1';
+        }
+      }
+    } else {
+      dieSize = int.parse(dieInfo);
+    }
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -270,6 +296,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       currentDie = dieSize;
+      extra = advantageDisadvantage;
     });
   }
 
@@ -367,12 +394,14 @@ class _MyHomePageState extends State<MyHomePage> {
                               ))),
                       OutlinedButton(
                           onPressed: () {
-                            rollIt(
+                            SavedRoll roll = SavedRoll(
+                                '',
                                 int.parse(numberOfDiceController.text),
                                 currentDie,
                                 symbol,
                                 int.parse(bonusController.text),
-                                _addToHistory);
+                                extra: extra);
+                            rollIt(roll, _addToHistory);
                           },
                           child: const Text('Roll')),
                       OutlinedButton(
