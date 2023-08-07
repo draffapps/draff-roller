@@ -37,6 +37,8 @@ class CustomIcons {
       IconData(0xf527, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData dice_two =
       IconData(0xf528, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData d20 =
+  static const IconData dice_d20 =
       IconData(0xf6cf, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData horse_head =
+      IconData(0xf7ab, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

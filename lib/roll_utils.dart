@@ -85,6 +85,7 @@ void rollD20(SavedRoll roll, Function addToHistory) {
 }
 
 final diceIcons = {
+  1: CustomIcons.dice_one,
   2: CustomIcons.dice_two,
   3: CustomIcons.dice_three,
   4: CustomIcons.dice_four,
@@ -202,4 +203,86 @@ List<int> rollShadowrun5(SavedRoll roll, Function addToHistory,
   ));
 
   return priorRoll.isEmpty && extra.isEmpty ? rollInfo : [];
+}
+
+void rollSubversion(SavedRoll roll, Function addToHistory) {
+  var SavedRoll(:numberOfDice, :symbol, :description, :bonus, :extra) = roll;
+  List<Widget> entry = [];
+  List<int> rollInfo = [];
+  List<int> modifiedRolls = [];
+  int sum = bonus;
+  int sixes = 0;
+  int reliable = symbol.isEmpty ? 1 : int.parse(symbol);
+  int dull = extra.isEmpty ? 6 : int.parse(extra);
+
+  if (description != '') {
+    entry.add(Text(
+      description,
+      style: const TextStyle(
+        fontWeight: FontWeight.bold,
+      ),
+    ));
+    entry.add(const SizedBox(width: 5));
+  }
+
+  for (var walker = 0; walker < numberOfDice; walker++) {
+    int current = getDie(6);
+    rollInfo.add(current);
+
+    if (dull < current) {
+      current = dull;
+    }
+
+    if (reliable > current) {
+      current = reliable;
+    }
+
+    modifiedRolls.add(current);
+  }
+
+  List<int> keptRolls = List.from(modifiedRolls);
+  keptRolls = keptRolls.sublist(keptRolls.length - 3);
+  keptRolls.sort();
+
+  for (var dieWalker = 0; dieWalker < modifiedRolls.length; dieWalker++) {
+    int dieRoll = modifiedRolls[dieWalker];
+    int originalRoll = rollInfo[dieWalker];
+    if (keptRolls.contains(dieRoll)) {
+      if (dieRoll == 6) {
+        sixes++;
+      }
+      sum += dieRoll;
+      keptRolls.remove(dieRoll);
+      if (dieRoll != originalRoll) {
+        entry.add(Badge(
+            backgroundColor:
+                originalRoll < dieRoll ? Colors.green : Colors.orange,
+            label: Text('${dieRoll - originalRoll}'),
+            child: Icon(diceIcons[dieRoll], color: Colors.blue)));
+      } else {
+        entry.add(Icon(diceIcons[dieRoll], color: Colors.blue));
+      }
+    } else {
+      if (dieRoll != originalRoll) {
+        entry.add(Badge(
+            backgroundColor:
+                originalRoll < dieRoll ? Colors.green : Colors.orange,
+            label: Text('${dieRoll - originalRoll}'),
+            child: Icon(diceIcons[dieRoll])));
+      } else {
+        entry.add(Icon(diceIcons[dieRoll]));
+      }
+    }
+  }
+
+  entry.add(Text('+ $bonus = $sum'));
+
+  if (sixes == 3) {
+    entry.add(const Text(
+      ' CRITICAL SUCCESS',
+      style: TextStyle(color: Colors.green),
+    ));
+  }
+
+  addToHistory(Wrap(alignment: WrapAlignment.center, children: entry));
 }

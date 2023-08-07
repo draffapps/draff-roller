@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:roller/custom_icons.dart';
 import 'package:roller/d20_roller.dart';
 import 'package:roller/shadowrun5_roller.dart';
+import 'package:roller/subversion_roller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -79,10 +80,15 @@ class _oddRollerState extends State<oddRoller> {
   Widget build(BuildContext context) {
     Widget rollWidget;
 
-    if (currentRoller == 1) {
-      rollWidget = Shadowrun5Roller(addToHistory: _addToHistory);
-    } else {
-      rollWidget = D20Roller(addToHistory: _addToHistory);
+    switch (currentRoller) {
+      case 1:
+        rollWidget = Shadowrun5Roller(addToHistory: _addToHistory);
+        break;
+      case 2:
+        rollWidget = SubversionRoller(addToHistory: _addToHistory);
+        break;
+      default:
+        rollWidget = D20Roller(addToHistory: _addToHistory);
     }
 
     return Scaffold(
@@ -113,12 +119,16 @@ class _oddRollerState extends State<oddRoller> {
               child: BottomNavigationBar(
                 items: const [
                   BottomNavigationBarItem(
-                    icon: Icon(CustomIcons.d20),
+                    icon: Icon(CustomIcons.dice_d20),
                     label: 'D20',
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.save),
                     label: 'Shadowrun',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(CustomIcons.horse_head),
+                    label: 'Subversion',
                   ),
                 ],
                 currentIndex: currentRoller,
