@@ -241,8 +241,8 @@ void rollSubversion(SavedRoll roll, Function addToHistory) {
   }
 
   List<int> keptRolls = List.from(modifiedRolls);
-  keptRolls = keptRolls.sublist(keptRolls.length - 3);
   keptRolls.sort();
+  keptRolls = keptRolls.sublist(keptRolls.length - 3);
 
   for (var dieWalker = 0; dieWalker < modifiedRolls.length; dieWalker++) {
     int dieRoll = modifiedRolls[dieWalker];
