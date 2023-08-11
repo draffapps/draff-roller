@@ -87,7 +87,7 @@ class _D20RollerState extends State<D20Roller> {
 
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Enter Name'),
@@ -130,7 +130,7 @@ class _D20RollerState extends State<D20Roller> {
     if (savedRolls.isEmpty) {
       return showDialog<void>(
           context: context,
-          barrierDismissible: false, // user must tap button!
+          barrierDismissible: true,
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text(
@@ -151,7 +151,7 @@ class _D20RollerState extends State<D20Roller> {
 
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text(

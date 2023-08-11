@@ -47,7 +47,7 @@ class oddRoller extends StatefulWidget {
 
 // ignore: camel_case_types
 class _oddRollerState extends State<oddRoller> {
-  final List<Wrap> history = [];
+  final List<Widget> history = [];
   int currentRoller = 0;
 
   @override
@@ -70,7 +70,7 @@ class _oddRollerState extends State<oddRoller> {
     super.dispose();
   }
 
-  void _addToHistory(Wrap entry) {
+  void _addToHistory(Widget entry) {
     setState(() {
       history.add(entry);
     });
@@ -123,7 +123,7 @@ class _oddRollerState extends State<oddRoller> {
                     label: 'D20',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.save),
+                    icon: Icon(Icons.keyboard_alt),
                     label: 'Shadowrun',
                   ),
                   BottomNavigationBarItem(

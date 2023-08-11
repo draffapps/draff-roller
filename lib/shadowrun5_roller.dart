@@ -77,7 +77,7 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller> {
 
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Enter Name'),
@@ -116,7 +116,7 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller> {
     if (savedRolls.isEmpty) {
       return showDialog<void>(
           context: context,
-          barrierDismissible: false, // user must tap button!
+          barrierDismissible: true,
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text(
@@ -137,7 +137,7 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller> {
 
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text(

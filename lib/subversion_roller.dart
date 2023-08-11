@@ -175,7 +175,7 @@ class _SubversionRollerState extends State<SubversionRoller> {
 
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Enter Name'),
@@ -218,7 +218,7 @@ class _SubversionRollerState extends State<SubversionRoller> {
     if (savedRolls.isEmpty) {
       return showDialog<void>(
           context: context,
-          barrierDismissible: false, // user must tap button!
+          barrierDismissible: true,
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text(
@@ -239,7 +239,7 @@ class _SubversionRollerState extends State<SubversionRoller> {
 
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text(
