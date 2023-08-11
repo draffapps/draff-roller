@@ -22,7 +22,7 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller>
   List<SavedRoll> savedRolls = [];
 
   List<int> priorRoll = [];
-  final numberOfDiceController = TextEditingController(text: '1');
+  final numberOfDiceController = TextEditingController(text: '12');
 
   void _loadSavedRolls() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -108,7 +108,7 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller>
                     widget.addToHistory,
                     AnimationController(
                         vsync: this,
-                        duration: const Duration(milliseconds: 750))
+                        duration: const Duration(milliseconds: 1250))
                       ..forward());
                 Navigator.of(context).pop();
               },
@@ -231,7 +231,7 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller>
                             widget.addToHistory,
                             AnimationController(
                                 vsync: this,
-                                duration: const Duration(milliseconds: 750))
+                                duration: const Duration(milliseconds: 1250))
                               ..forward());
                       },
                       child: const Text('Roll')),
@@ -245,7 +245,7 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller>
                             widget.addToHistory,
                             AnimationController(
                                 vsync: this,
-                                duration: const Duration(milliseconds: 750))
+                                duration: const Duration(milliseconds: 1250))
                               ..forward());
                       },
                       child: const Text('Pre')),
@@ -268,7 +268,8 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller>
                                 widget.addToHistory,
                                 AnimationController(
                                     vsync: this,
-                                    duration: const Duration(milliseconds: 750))
+                                    duration:
+                                        const Duration(milliseconds: 1250))
                                   ..forward(),
                                 priorRoll: priorRoll);
                           },

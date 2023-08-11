@@ -97,8 +97,8 @@ List<int> rollShadowrun5(
     SavedRoll roll, Function addToHistory, AnimationController animcontroller,
     {List<int>? priorRoll}) {
   var SavedRoll(:numberOfDice, :description, :extra) = roll;
-  Animation<double> sizeAnimation =
-      Tween<double>(begin: 1.5, end: 1).animate(animcontroller);
+  Animation<double> sizeAnimation = Tween<double>(begin: 1.5, end: 1)
+      .animate(CurvedAnimation(parent: animcontroller, curve: Curves.bounceIn));
 
   List<int> rollInfo = [];
   List<Widget> entry = [];
