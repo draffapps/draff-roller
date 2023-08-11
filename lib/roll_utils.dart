@@ -93,9 +93,12 @@ final diceIcons = {
   6: CustomIcons.dice_six
 };
 
-List<int> rollShadowrun5(SavedRoll roll, Function addToHistory,
+List<int> rollShadowrun5(
+    SavedRoll roll, Function addToHistory, AnimationController animcontroller,
     {List<int>? priorRoll}) {
   var SavedRoll(:numberOfDice, :description, :extra) = roll;
+  Animation<double> sizeAnimation =
+      Tween<double>(begin: 1.5, end: 1).animate(animcontroller);
 
   List<int> rollInfo = [];
   List<Widget> entry = [];
@@ -143,10 +146,10 @@ List<int> rollShadowrun5(SavedRoll roll, Function addToHistory,
       ));
       ones++;
     } else if (current >= 5) {
-      entry.add(Icon(
-        diceIcons[current],
-        color: Colors.blue,
-      ));
+      entry.add(ScaleTransition(
+          scale: sizeAnimation,
+          child: Icon(diceIcons[current], color: Colors.blue)));
+      animcontroller.forward();
       hits++;
       if (extra == '<') {
         while (current == 6) {

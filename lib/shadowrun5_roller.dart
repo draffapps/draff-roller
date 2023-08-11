@@ -16,7 +16,8 @@ class Shadowrun5Roller extends StatefulWidget {
 }
 
 // ignore: camel_case_types
-class _Shadowrun5RollerState extends State<Shadowrun5Roller> {
+class _Shadowrun5RollerState extends State<Shadowrun5Roller>
+    with TickerProviderStateMixin {
   final List<Row> history = [];
   List<SavedRoll> savedRolls = [];
 
@@ -102,7 +103,13 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller> {
                     int.parse(numberOfDiceController.text), 6, '', 0,
                     extra: '');
                 _addSavedRoll(roll);
-                priorRoll = rollShadowrun5(roll, widget.addToHistory);
+                priorRoll = rollShadowrun5(
+                    roll,
+                    widget.addToHistory,
+                    AnimationController(
+                        vsync: this,
+                        duration: const Duration(milliseconds: 750))
+                      ..forward());
                 Navigator.of(context).pop();
               },
             ),
@@ -151,8 +158,14 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller> {
                         Expanded(
                             child: OutlinedButton(
                                 onPressed: () {
-                                  priorRoll =
-                                      rollShadowrun5(e, widget.addToHistory);
+                                  priorRoll = rollShadowrun5(
+                                      e,
+                                      widget.addToHistory,
+                                      AnimationController(
+                                          vsync: this,
+                                          duration:
+                                              const Duration(milliseconds: 500))
+                                        ..forward());
                                   Navigator.of(context).pop();
                                 },
                                 child: Text(
@@ -213,7 +226,13 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller> {
                         SavedRoll roll = SavedRoll('',
                             int.parse(numberOfDiceController.text), 6, '', 0,
                             extra: '');
-                        priorRoll = rollShadowrun5(roll, widget.addToHistory);
+                        priorRoll = rollShadowrun5(
+                            roll,
+                            widget.addToHistory,
+                            AnimationController(
+                                vsync: this,
+                                duration: const Duration(milliseconds: 750))
+                              ..forward());
                       },
                       child: const Text('Roll')),
                   OutlinedButton(
@@ -221,7 +240,13 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller> {
                         SavedRoll roll = SavedRoll('',
                             int.parse(numberOfDiceController.text), 6, '', 0,
                             extra: '<');
-                        priorRoll = rollShadowrun5(roll, widget.addToHistory);
+                        priorRoll = rollShadowrun5(
+                            roll,
+                            widget.addToHistory,
+                            AnimationController(
+                                vsync: this,
+                                duration: const Duration(milliseconds: 750))
+                              ..forward());
                       },
                       child: const Text('Pre')),
                   OutlinedButton(
@@ -239,7 +264,12 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller> {
                                 0,
                                 extra: '');
                             priorRoll = rollShadowrun5(
-                                roll, widget.addToHistory,
+                                roll,
+                                widget.addToHistory,
+                                AnimationController(
+                                    vsync: this,
+                                    duration: const Duration(milliseconds: 750))
+                                  ..forward(),
                                 priorRoll: priorRoll);
                           },
                     child: const Text('Post'),
