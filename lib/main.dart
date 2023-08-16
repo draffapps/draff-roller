@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:roller/custom_icons.dart';
-import 'package:roller/d20_roller.dart';
-import 'package:roller/shadowrun5_roller.dart';
-import 'package:roller/subversion_roller.dart';
+import 'package:roller/d20/d20_controller.dart';
+import 'package:roller/shadowrun/shadowrun5_controls.dart';
+import 'package:roller/subversion/subversion_controller.dart';
+import 'package:roller/text/text_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -87,23 +88,19 @@ class _oddRollerState extends State<oddRoller> {
       case 2:
         rollWidget = SubversionRoller(addToHistory: _addToHistory);
         break;
+      case 3:
+        rollWidget = TextController(addToHistory: _addToHistory);
+        break;
       default:
         rollWidget = D20Roller(addToHistory: _addToHistory);
     }
 
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -117,6 +114,7 @@ class _oddRollerState extends State<oddRoller> {
             rollWidget,
             SafeArea(
               child: BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
                 items: const [
                   BottomNavigationBarItem(
                     icon: Icon(CustomIcons.dice_d20),
@@ -129,6 +127,10 @@ class _oddRollerState extends State<oddRoller> {
                   BottomNavigationBarItem(
                     icon: Icon(CustomIcons.horse_head),
                     label: 'Subversion',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.text_fields),
+                    label: 'Text',
                   ),
                 ],
                 currentIndex: currentRoller,

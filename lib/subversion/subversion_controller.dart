@@ -2,31 +2,116 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:roller/roll_utils.dart';
+import 'package:roller/subversion/subversion_roller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'saved_roll.dart';
+import '../saved_roll.dart';
 
-class Shadowrun5Roller extends StatefulWidget {
-  const Shadowrun5Roller({super.key, required this.addToHistory});
+const reliableRolls = ['Reli', '2', '3', '4', '5', '6'];
+const dullRolls = ['Dull', '5', '4', '3', '2', '1'];
+
+class ReliableDropDown extends StatefulWidget {
+  final Function(String value) notifyParent;
+  const ReliableDropDown({Key? key, required this.notifyParent})
+      : super(key: key);
+
+  @override
+  State<ReliableDropDown> createState() => _ReliableDropDownState();
+}
+
+class _ReliableDropDownState extends State<ReliableDropDown> {
+  String dropdownValue = reliableRolls.first;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+      value: dropdownValue,
+      elevation: 16,
+      style: TextStyle(color: Theme.of(context).colorScheme.primary),
+      underline: Container(
+        height: 2,
+        color: Theme.of(context).colorScheme.onPrimary,
+      ),
+      onChanged: (String? value) {
+        if (value == null) return;
+        // This is called when the user selects an item.
+        setState(() {
+          dropdownValue = value;
+        });
+        widget.notifyParent(value);
+      },
+      items: reliableRolls.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class DullDropDown extends StatefulWidget {
+  final Function(String value) notifyParent;
+  const DullDropDown({Key? key, required this.notifyParent}) : super(key: key);
+
+  @override
+  State<DullDropDown> createState() => _DullDropDownState();
+}
+
+class _DullDropDownState extends State<DullDropDown> {
+  String dropdownValue = dullRolls.first;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+      value: dropdownValue,
+      elevation: 16,
+      style: TextStyle(color: Theme.of(context).colorScheme.primary),
+      underline: Container(
+        height: 2,
+        color: Theme.of(context).colorScheme.onPrimary,
+      ),
+      onChanged: (String? value) {
+        if (value == null) return;
+        // This is called when the user selects an item.
+        setState(() {
+          dropdownValue = value;
+        });
+        widget.notifyParent(value);
+      },
+      items: dullRolls.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class SubversionRoller extends StatefulWidget {
+  const SubversionRoller({super.key, required this.addToHistory});
   final Function(Wrap) addToHistory;
 
   @override
-  State<Shadowrun5Roller> createState() => _Shadowrun5RollerState();
+  State<SubversionRoller> createState() => _SubversionRollerState();
 }
 
 // ignore: camel_case_types
-class _Shadowrun5RollerState extends State<Shadowrun5Roller>
+class _SubversionRollerState extends State<SubversionRoller>
     with TickerProviderStateMixin {
   final List<Row> history = [];
   List<SavedRoll> savedRolls = [];
+  String symbol = 'Reli';
+  String extra = 'Dull';
 
   List<int> priorRoll = [];
-  final numberOfDiceController = TextEditingController(text: '12');
+  final numberOfDiceController = TextEditingController(text: '3');
+  final bonusController = TextEditingController(text: '0');
 
   void _loadSavedRolls() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String json = prefs.getString('sr5Rolls') ?? '[]';
+    String json = prefs.getString('subversionRolls') ?? '[]';
     List<dynamic> rollMap = jsonDecode(json);
 
     List<SavedRoll> rolls = [];
@@ -45,13 +130,22 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller>
     _loadSavedRolls();
   }
 
+  void _roll(SavedRoll roll) {
+    rollSubversion(
+        roll,
+        widget.addToHistory,
+        AnimationController(
+            vsync: this, duration: const Duration(milliseconds: 1250))
+          ..forward());
+  }
+
   void _addSavedRoll(SavedRoll savedRoll) async {
     final prefs = await SharedPreferences.getInstance();
     List<SavedRoll> newList = [...savedRolls, savedRoll];
 
     setState(() {
       savedRolls = newList;
-      prefs.setString('sr5Rolls', jsonEncode(newList));
+      prefs.setString('subversionRolls', jsonEncode(newList));
     });
   }
 
@@ -62,7 +156,19 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller>
     savedRolls.removeAt(index);
     setState(() {
       savedRolls = savedRolls;
-      prefs.setString('sr5Rolls', jsonEncode(savedRolls));
+      prefs.setString('subversionRolls', jsonEncode(savedRolls));
+    });
+  }
+
+  void _setReliable(String reliable) {
+    setState(() {
+      symbol = reliable;
+    });
+  }
+
+  void _setDull(String dull) {
+    setState(() {
+      extra = dull;
     });
   }
 
@@ -70,6 +176,7 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller>
   void dispose() {
     // Clean up the controller when the widget is disposed.
     numberOfDiceController.dispose();
+    bonusController.dispose();
     super.dispose();
   }
 
@@ -99,17 +206,15 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller>
               child: const Text('Save'),
               onPressed: () {
                 if (nameController.text.isEmpty) return;
-                SavedRoll roll = SavedRoll(nameController.text,
-                    int.parse(numberOfDiceController.text), 6, '', 0,
-                    extra: '');
+                SavedRoll roll = SavedRoll(
+                    nameController.text,
+                    int.parse(numberOfDiceController.text),
+                    6,
+                    symbol == 'Reli' ? '' : symbol,
+                    int.parse(bonusController.text),
+                    extra: extra == 'Dull' ? '' : extra);
                 _addSavedRoll(roll);
-                priorRoll = rollShadowrun5(
-                    roll,
-                    widget.addToHistory,
-                    AnimationController(
-                        vsync: this,
-                        duration: const Duration(milliseconds: 1250))
-                      ..forward());
+                _roll(roll);
                 Navigator.of(context).pop();
               },
             ),
@@ -158,18 +263,11 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller>
                         Expanded(
                             child: OutlinedButton(
                                 onPressed: () {
-                                  priorRoll = rollShadowrun5(
-                                      e,
-                                      widget.addToHistory,
-                                      AnimationController(
-                                          vsync: this,
-                                          duration:
-                                              const Duration(milliseconds: 500))
-                                        ..forward());
+                                  _roll(e);
                                   Navigator.of(context).pop();
                                 },
                                 child: Text(
-                                    '${e.description}: ${e.numberOfDice}'))),
+                                    '${e.description}: ${e.numberOfDice}d6+${e.bonus}${e.symbol != '' ? ' Reli: ${e.symbol}' : ''}${e.extra != '' ? ' Dull: ${e.extra}' : ''}'))),
                         IconButton(
                           icon: const Icon(Icons.delete),
                           tooltip: 'Delete',
@@ -219,69 +317,49 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller>
                           ], // Only numbers can be entered
                           controller: numberOfDiceController,
                           decoration: const InputDecoration(
-                            border: UnderlineInputBorder(),
-                          ))),
+                              isDense: true,
+                              border: UnderlineInputBorder(),
+                              hintText: 'Dice'))),
+                  const Text('d6+'),
+                  SizedBox(
+                      width: 50,
+                      child: TextField(
+                          textAlign: TextAlign.center,
+                          textAlignVertical: TextAlignVertical.bottom,
+                          controller: bonusController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ], // Only numbers can be entered
+                          decoration: const InputDecoration(
+                              isDense: true,
+                              border: UnderlineInputBorder(),
+                              hintText: 'Bonus'))),
+                  ReliableDropDown(
+                    notifyParent: _setReliable,
+                  ),
+                  DullDropDown(
+                    notifyParent: _setDull,
+                  ),
                   OutlinedButton(
                       onPressed: () {
-                        SavedRoll roll = SavedRoll('',
-                            int.parse(numberOfDiceController.text), 6, '', 0,
-                            extra: '');
-                        priorRoll = rollShadowrun5(
-                            roll,
-                            widget.addToHistory,
-                            AnimationController(
-                                vsync: this,
-                                duration: const Duration(milliseconds: 1250))
-                              ..forward());
+                        SavedRoll roll = SavedRoll(
+                            '',
+                            int.parse(numberOfDiceController.text),
+                            6,
+                            symbol == 'Reli' ? '' : symbol,
+                            int.parse(bonusController.text),
+                            extra: extra == 'Dull' ? '' : extra);
+                        _roll(roll);
                       },
                       child: const Text('Roll')),
-                  OutlinedButton(
-                      onPressed: () {
-                        SavedRoll roll = SavedRoll('',
-                            int.parse(numberOfDiceController.text), 6, '', 0,
-                            extra: '<');
-                        priorRoll = rollShadowrun5(
-                            roll,
-                            widget.addToHistory,
-                            AnimationController(
-                                vsync: this,
-                                duration: const Duration(milliseconds: 1250))
-                              ..forward());
-                      },
-                      child: const Text('Pre')),
-                  OutlinedButton(
-                    onPressed: priorRoll.isEmpty ||
-                            priorRoll.where((element) => element == 1).length /
-                                    priorRoll.length >
-                                .5
-                        ? null
-                        : () {
-                            SavedRoll roll = SavedRoll(
-                                '',
-                                int.parse(numberOfDiceController.text),
-                                6,
-                                '',
-                                0,
-                                extra: '');
-                            priorRoll = rollShadowrun5(
-                                roll,
-                                widget.addToHistory,
-                                AnimationController(
-                                    vsync: this,
-                                    duration:
-                                        const Duration(milliseconds: 1250))
-                                  ..forward(),
-                                priorRoll: priorRoll);
-                          },
-                    child: const Text('Post'),
-                  ),
                   OutlinedButton(
                       onPressed: _saveDialog, child: const Text('Save')),
                 ],
               ),
             )),
         OutlinedButton(
-            onPressed: _savedRollsDialog,
+            onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
             child: const Text('Show Saved Rolls')),
       ],
     );

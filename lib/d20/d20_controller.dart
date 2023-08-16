@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:roller/roll_utils.dart';
+import 'package:roller/d20/d20_roller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'saved_roll.dart';
+import '../saved_roll.dart';
 
 class D20Roller extends StatefulWidget {
   const D20Roller({super.key, required this.addToHistory});
@@ -320,7 +320,7 @@ class _D20RollerState extends State<D20Roller> {
               ),
             )),
         OutlinedButton(
-            onPressed: _savedRollsDialog,
+            onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
             child: const Text('Show Saved Rolls')),
       ],
     );
