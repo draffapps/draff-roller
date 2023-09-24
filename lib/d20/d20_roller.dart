@@ -15,7 +15,9 @@ void rollD20(SavedRoll roll, Function addToHistory) {
     :extra
   ) = roll;
   List<Widget> entry = [];
+  String rollSpeech = '';
   if (description != '') {
+    rollSpeech += description;
     entry.add(Text(
       description,
       style: const TextStyle(
@@ -28,6 +30,8 @@ void rollD20(SavedRoll roll, Function addToHistory) {
     '${numberOfDice}d$dieSize $symbol $bonus ',
     style: const TextStyle(fontStyle: FontStyle.italic),
   ));
+  rollSpeech +=
+      '${rollSpeech.isNotEmpty ? ' ' : ''} ${numberOfDice}d$dieSize ${symbol == '+' ? 'plus' : 'minus'} $bonus rolls ';
 
   String rollInfo = ': ';
   int sum = bonus;
@@ -39,6 +43,7 @@ void rollD20(SavedRoll roll, Function addToHistory) {
       rollInfo += '$dieRoll ';
       sum += dieRoll;
     }
+    rollSpeech += '${rollInfo.substring(2)} ';
   } else {
     int dieRoll = getDie(dieSize);
     int dieRoll2 = getDie(dieSize);
@@ -53,6 +58,8 @@ void rollD20(SavedRoll roll, Function addToHistory) {
                 ? TextDecoration.none
                 : TextDecoration.lineThrough)));
 
+    rollSpeech += '$dieRoll ${dieRoll == keep ? '' : ' discarded'} ';
+
     entry.add(const Text(' '));
 
     entry.add(Text('$dieRoll2',
@@ -62,9 +69,12 @@ void rollD20(SavedRoll roll, Function addToHistory) {
                 : TextDecoration.none)));
 
     entry.add(const Text(')'));
+
+    rollSpeech += '$dieRoll2 ${dieRoll2 == keep ? '' : ' discarded'} ';
   }
 
   rollInfo += '$symbol $bonus = ';
+  rollSpeech += '${symbol == '+' ? 'plus' : 'minus'} $bonus = $sum';
 
   entry.add(Text(rollInfo));
   entry.add(Text(sum.toString(),
@@ -72,8 +82,10 @@ void rollD20(SavedRoll roll, Function addToHistory) {
         fontWeight: FontWeight.bold,
       )));
 
-  addToHistory(Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: entry,
-  ));
+  addToHistory(
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: entry,
+      ),
+      rollSpeech);
 }

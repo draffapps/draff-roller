@@ -9,7 +9,7 @@ import '../saved_roll.dart';
 
 class D20Roller extends StatefulWidget {
   const D20Roller({super.key, required this.addToHistory});
-  final Function(Wrap) addToHistory;
+  final Function(Wrap, String) addToHistory;
 
   @override
   State<D20Roller> createState() => _D20RollerState();

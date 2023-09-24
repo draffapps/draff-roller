@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:roller/custom_icons.dart';
 import 'package:roller/d20/d20_controller.dart';
@@ -5,6 +7,7 @@ import 'package:roller/shadowrun/shadowrun5_controls.dart';
 import 'package:roller/subversion/subversion_controller.dart';
 import 'package:roller/text/text_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -46,15 +49,120 @@ class oddRoller extends StatefulWidget {
   State<oddRoller> createState() => _oddRollerState();
 }
 
+enum TtsState { playing, stopped, paused, continued }
+
 // ignore: camel_case_types
 class _oddRollerState extends State<oddRoller> {
+  late FlutterTts flutterTts;
   final List<Widget> history = [];
   int currentRoller = 0;
+  TtsState ttsState = TtsState.stopped;
+
+  bool muted = true;
+  bool get isIOS => !kIsWeb && Platform.isIOS;
+  bool get isAndroid => !kIsWeb && Platform.isAndroid;
+  bool get isWindows => !kIsWeb && Platform.isWindows;
+  bool get isWeb => kIsWeb;
 
   @override
   void initState() {
     super.initState();
     _getLastRoller();
+    _getMuted();
+    initTts();
+  }
+
+  initTts() {
+    flutterTts = FlutterTts();
+
+    _setAwaitOptions();
+
+    if (isAndroid) {
+      _getDefaultEngine();
+      _getDefaultVoice();
+    }
+
+    flutterTts.setStartHandler(() {
+      setState(() {
+        print("Playing");
+        ttsState = TtsState.playing;
+      });
+    });
+
+    if (isAndroid) {
+      flutterTts.setInitHandler(() {
+        setState(() {
+          print("TTS Initialized");
+        });
+      });
+    }
+
+    flutterTts.setCompletionHandler(() {
+      setState(() {
+        print("Complete");
+        ttsState = TtsState.stopped;
+      });
+    });
+
+    flutterTts.setCancelHandler(() {
+      setState(() {
+        print("Cancel");
+        ttsState = TtsState.stopped;
+      });
+    });
+
+    flutterTts.setPauseHandler(() {
+      setState(() {
+        print("Paused");
+        ttsState = TtsState.paused;
+      });
+    });
+
+    flutterTts.setContinueHandler(() {
+      setState(() {
+        print("Continued");
+        ttsState = TtsState.continued;
+      });
+    });
+
+    flutterTts.setErrorHandler((msg) {
+      setState(() {
+        print("error: $msg");
+        ttsState = TtsState.stopped;
+      });
+    });
+  }
+
+  Future<dynamic> _getLanguages() async => await flutterTts.getLanguages;
+
+  Future<dynamic> _getEngines() async => await flutterTts.getEngines;
+
+  Future _getDefaultEngine() async {
+    var engine = await flutterTts.getDefaultEngine;
+    if (engine != null) {
+      print(engine);
+    }
+  }
+
+  Future _getDefaultVoice() async {
+    var voice = await flutterTts.getDefaultVoice;
+    if (voice != null) {
+      print(voice);
+    }
+  }
+
+  Future _setAwaitOptions() async {
+    await flutterTts.awaitSpeakCompletion(true);
+  }
+
+  Future _stop() async {
+    var result = await flutterTts.stop();
+    if (result == 1) setState(() => ttsState = TtsState.stopped);
+  }
+
+  Future _pause() async {
+    var result = await flutterTts.pause();
+    if (result == 1) setState(() => ttsState = TtsState.paused);
   }
 
   void _getLastRoller() async {
@@ -65,16 +173,31 @@ class _oddRollerState extends State<oddRoller> {
     });
   }
 
+  void _getMuted() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      muted = prefs.getBool('muted') ?? true;
+    });
+  }
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     super.dispose();
   }
 
-  void _addToHistory(Widget entry) {
+  void _addToHistory(Widget entry, String rollSpeech) async {
     setState(() {
       history.add(entry);
     });
+    if (rollSpeech.isNotEmpty && !muted) {
+      await flutterTts.setVolume(.5);
+      await flutterTts.setSpeechRate(1);
+      await flutterTts.setPitch(.5);
+
+      await flutterTts.speak(rollSpeech);
+    }
   }
 
   @override
@@ -96,6 +219,19 @@ class _oddRollerState extends State<oddRoller> {
     }
 
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          bool newState = !muted;
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setBool('muted', newState);
+          setState(() {
+            muted = newState;
+          });
+        },
+        child:
+            muted ? const Icon(Icons.volume_off) : const Icon(Icons.volume_up),
+      ),
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),

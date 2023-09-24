@@ -9,7 +9,7 @@ import '../saved_roll.dart';
 
 class Shadowrun5Roller extends StatefulWidget {
   const Shadowrun5Roller({super.key, required this.addToHistory});
-  final Function(Wrap) addToHistory;
+  final Function(Wrap, String) addToHistory;
 
   @override
   State<Shadowrun5Roller> createState() => _Shadowrun5RollerState();

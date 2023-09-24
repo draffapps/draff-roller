@@ -8,7 +8,7 @@ import '../saved_roll.dart';
 
 class TextController extends StatefulWidget {
   const TextController({super.key, required this.addToHistory});
-  final Function(Wrap) addToHistory;
+  final Function(Wrap, String) addToHistory;
 
   @override
   State<TextController> createState() => _TextControllerState();

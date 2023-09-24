@@ -91,7 +91,7 @@ class _DullDropDownState extends State<DullDropDown> {
 
 class SubversionRoller extends StatefulWidget {
   const SubversionRoller({super.key, required this.addToHistory});
-  final Function(Wrap) addToHistory;
+  final Function(Wrap, String) addToHistory;
 
   @override
   State<SubversionRoller> createState() => _SubversionRollerState();
