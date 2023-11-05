@@ -185,6 +185,7 @@ class _oddRollerState extends State<oddRoller> {
   void dispose() {
     // Clean up the controller when the widget is disposed.
     super.dispose();
+    flutterTts.stop();
   }
 
   void _addToHistory(Widget entry, String rollSpeech) async {
@@ -195,8 +196,9 @@ class _oddRollerState extends State<oddRoller> {
       await flutterTts.setVolume(.5);
       await flutterTts.setSpeechRate(1);
       await flutterTts.setPitch(.5);
+      print('playing');
 
-      await flutterTts.speak(rollSpeech);
+      flutterTts.speak(rollSpeech);
     }
   }
 

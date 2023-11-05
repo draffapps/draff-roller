@@ -6,6 +6,7 @@ import '../saved_roll.dart';
 void rollText(SavedRoll roll, Function addToHistory) {
   var SavedRoll(:description, :extra) = roll;
   List<Widget> entry = [];
+  String rollSpeech = '';
   if (description != '') {
     entry.add(Text(
       description,
@@ -14,6 +15,7 @@ void rollText(SavedRoll roll, Function addToHistory) {
       ),
     ));
     entry.add(const SizedBox(width: 5));
+    rollSpeech = description;
   }
 
   final roller = DiceExpression.create(extra);
@@ -21,10 +23,15 @@ void rollText(SavedRoll roll, Function addToHistory) {
   RollResult result = roller.roll();
 
   entry.add(Text('$extra='));
-  entry.add(Text(result.total.toString()));
+  String rollResult = result.total.toString();
+  entry.add(Text(rollResult));
 
-  addToHistory(Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: entry,
-  ));
+  rollSpeech += '$extra=$rollResult)';
+
+  addToHistory(
+      Wrap(
+        alignment: WrapAlignment.center,
+        children: entry,
+      ),
+      rollSpeech);
 }

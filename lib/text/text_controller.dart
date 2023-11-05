@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:roller/text/text_roller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../saved_roll.dart';
 
@@ -178,6 +180,50 @@ class _TextControllerState extends State<TextController> {
     );
   }
 
+  final Uri _url = Uri.parse('https://pub.dev/packages/dart_dice_parser');
+
+  Future<void> _launchUrl() async {
+    if (!await launchUrl(
+      _url,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw Exception('Could not launch $_url');
+    }
+  }
+
+  Future<void> _helpDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Text Roller Help'),
+          content: SingleChildScrollView(
+              child: RichText(
+                  text: TextSpan(
+                      style: const TextStyle(color: Colors.black),
+                      text:
+                          'This uses the dart_dice_parser library.  Your basic rolls should work as expected, such as "1d20+5".  You can also drop the lowest "2d20-L", keep the highest "2d20k".  Note, do not use the quotes.  Full info can be found ',
+                      children: [
+                TextSpan(
+                    text: 'here',
+                    style: TextStyle(color: Colors.blue[300]),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () => _launchUrl())
+              ]))),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -208,6 +254,8 @@ class _TextControllerState extends State<TextController> {
                       child: const Text('Roll')),
                   OutlinedButton(
                       onPressed: _saveDialog, child: const Text('Save')),
+                  OutlinedButton(
+                      onPressed: _helpDialog, child: const Text('Help')),
                 ],
               ),
             )),

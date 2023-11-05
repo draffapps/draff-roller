@@ -39,6 +39,7 @@ dependencies:
   shared_preferences: ^2.2.0
   dart_dice_parser: ^5.1.5
   flutter_tts: ^3.8.3
+  url_launcher: ^6.1.14
 
 dev_dependencies:
   flutter_test:

@@ -14,6 +14,7 @@ void rollSubversion(
   int sixes = 0;
   int reliable = symbol.isEmpty ? 1 : int.parse(symbol);
   int dull = extra.isEmpty ? 6 : int.parse(extra);
+  String rollSpeech = '';
 
   if (description != '') {
     entry.add(Text(
@@ -23,6 +24,7 @@ void rollSubversion(
       ),
     ));
     entry.add(const SizedBox(width: 5));
+    rollSpeech = '$description ';
   }
 
   for (var walker = 0; walker < numberOfDice; walker++) {
@@ -59,7 +61,11 @@ void rollSubversion(
                 originalRoll < dieRoll ? Colors.green : Colors.orange,
             label: Text('${dieRoll - originalRoll}'),
             child: Icon(diceIcons[dieRoll], color: Colors.blue)));
+
+        rollSpeech +=
+            '$originalRoll ${originalRoll < dieRoll ? 'Reliable ' : 'Dulled '}to $dieRoll ';
       } else {
+        rollSpeech += '$dieRoll ';
         if (dieRoll != 6) {
           entry.add(Icon(diceIcons[dieRoll], color: Colors.blue));
         } else {
@@ -75,6 +81,9 @@ void rollSubversion(
                 originalRoll < dieRoll ? Colors.green : Colors.orange,
             label: Text('${dieRoll - originalRoll}'),
             child: Icon(diceIcons[dieRoll])));
+
+        rollSpeech +=
+            '$originalRoll ${originalRoll < dieRoll ? 'Reliable ' : 'Dulled '}to $dieRoll ';
       } else {
         if (dieRoll != 6) {
           entry.add(Icon(diceIcons[dieRoll]));
@@ -82,10 +91,13 @@ void rollSubversion(
           entry.add(ScaleTransition(
               scale: animation, child: Icon(diceIcons[dieRoll])));
         }
+        rollSpeech +=
+            '$originalRoll ${originalRoll < dieRoll ? 'Reliable ' : 'Dulled '}to $dieRoll ';
       }
     }
   }
 
+  rollSpeech += '+ $bonus = $sum ';
   entry.add(Text('+ $bonus = $sum'));
 
   if (sixes == 3) {
@@ -103,7 +115,9 @@ void rollSubversion(
             ),
           ),
         )));
+    rollSpeech += 'CRITICAL SUCCESS';
   }
 
-  addToHistory(Wrap(alignment: WrapAlignment.center, children: entry));
+  addToHistory(
+      Wrap(alignment: WrapAlignment.center, children: entry), rollSpeech);
 }

@@ -12,6 +12,7 @@ List<int> rollShadowrun5(
 
   List<int> rollInfo = [];
   List<Widget> entry = [];
+  String rollSpeech = '';
 
   priorRoll = priorRoll ?? [];
 
@@ -29,6 +30,8 @@ List<int> rollShadowrun5(
       ),
     ));
     entry.add(const SizedBox(width: 5));
+
+    rollSpeech += '$description ';
   }
 
   if (priorRoll.isNotEmpty) {
@@ -40,6 +43,8 @@ List<int> rollShadowrun5(
         diceIcons[element],
         color: Colors.blue,
       ));
+
+      rollSpeech += '$element ';
     }
     numberOfDice -= priorRoll.length;
   }
@@ -50,6 +55,9 @@ List<int> rollShadowrun5(
     int current = getDie(6);
     rollInfo.add(current);
     addDieToRoll(current, entry, sizeAnimation);
+
+    rollSpeech += '$current ';
+
     if (current == 1) {
       ones++;
     } else if (current >= 5) {
@@ -62,6 +70,7 @@ List<int> rollShadowrun5(
           ));
           rollInfo.add(current);
           addDieToRoll(current, entry, sizeAnimation);
+          rollSpeech += 'explodes $current ';
           if (current == 1) {
             ones++;
           } else if (current >= 5) {
@@ -85,17 +94,25 @@ List<int> rollShadowrun5(
         ' CRITICAL',
         style: TextStyle(color: Colors.pink),
       ));
+
+      rollSpeech += ' CRITICAL';
     }
     entry.add(const Text(
       ' GLITCH',
       style: TextStyle(color: Colors.lightGreenAccent),
     ));
+
+    rollSpeech += ' GLITCH';
   }
 
-  addToHistory(Wrap(
-    alignment: WrapAlignment.center,
-    children: entry,
-  ));
+  rollSpeech += ' = $hits hits and $ones ones';
+
+  addToHistory(
+      Wrap(
+        alignment: WrapAlignment.center,
+        children: entry,
+      ),
+      rollSpeech);
 
   return priorRoll.isEmpty && extra.isEmpty ? rollInfo : [];
 }
