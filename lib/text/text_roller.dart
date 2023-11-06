@@ -34,12 +34,12 @@ void rollText(SavedRoll roll, Function addToHistory) {
   if (showMetadata) {
     for (MapEntry<String, Object> item in result.metadata.entries) {
       metadata += ' ${item.key}';
-      if (item.value.runtimeType == List<int>) {
+      try {
         List<int> values = item.value as List<int>;
         for (int value in values) {
           metadata += ' $value';
         }
-      } else {
+      } catch (e) {
         metadata += ' metadata not expected type';
       }
     }
