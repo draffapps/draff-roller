@@ -17,6 +17,9 @@ void rollText(SavedRoll roll, Function addToHistory) {
     entry.add(const SizedBox(width: 5));
     rollSpeech = description;
   }
+  bool showMetadata = extra.endsWith('/m');
+
+  extra = extra.replaceFirst(RegExp(r'/m$'), '');
 
   final roller = DiceExpression.create(extra);
 
@@ -26,7 +29,27 @@ void rollText(SavedRoll roll, Function addToHistory) {
   String rollResult = result.total.toString();
   entry.add(Text(rollResult));
 
-  rollSpeech += '$extra=$rollResult)';
+  String metadata = '';
+
+  if (showMetadata) {
+    for (MapEntry<String, Object> item in result.metadata.entries) {
+      metadata += ' ${item.key}';
+      if (item.value.runtimeType == List<int>) {
+        List<int> values = item.value as List<int>;
+        for (int value in values) {
+          metadata += ' $value';
+        }
+      } else {
+        metadata += ' metadata not expected type';
+      }
+    }
+
+    entry.add(Text(metadata));
+  }
+
+  rollSpeech += '$extra=$rollResult $metadata';
+
+  if (showMetadata) {}
 
   addToHistory(
       Wrap(

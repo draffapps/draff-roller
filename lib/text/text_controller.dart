@@ -212,7 +212,7 @@ class _TextControllerState extends State<TextController> {
                   text: TextSpan(
                       style: const TextStyle(color: Colors.black),
                       text:
-                          'This uses the dart_dice_parser library.  Your basic rolls should work as expected, such as "1d20+5".  You can also drop the lowest "2d20-L", keep the highest "2d20k".  Note, do not use the quotes.  Full info can be found ',
+                          'This uses the dart_dice_parser library.  Your basic rolls should work as expected, such as "1d20+5".  You can also drop the lowest "2d20-L", keep the highest "2d20k".  Note, do not use the quotes.  If you add "/m" to the end, it will output any metadata.  Full info can be found ',
                       children: [
                 TextSpan(
                     text: 'here',
