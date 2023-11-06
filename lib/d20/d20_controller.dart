@@ -104,21 +104,24 @@ class _D20RollerState extends State<D20Roller> {
             ),
           ),
           actions: <Widget>[
-            TextButton(
-              child: const Text('Save'),
-              onPressed: () {
-                if (nameController.text.isEmpty) return;
-                SavedRoll roll = SavedRoll(
-                    nameController.text,
-                    int.parse(numberOfDiceController.text),
-                    currentDie,
-                    symbol,
-                    int.parse(bonusController.text),
-                    extra: extra);
-                _addSavedRoll(roll);
-                rollD20(roll, widget.addToHistory);
-                Navigator.of(context).pop();
-              },
+            Semantics(
+              label: 'Save Button',
+              child: TextButton(
+                child: const Text('Save'),
+                onPressed: () {
+                  if (nameController.text.isEmpty) return;
+                  SavedRoll roll = SavedRoll(
+                      nameController.text,
+                      int.parse(numberOfDiceController.text),
+                      currentDie,
+                      symbol,
+                      int.parse(bonusController.text),
+                      extra: extra);
+                  _addSavedRoll(roll);
+                  rollD20(roll, widget.addToHistory);
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
           ],
         );
@@ -138,11 +141,14 @@ class _D20RollerState extends State<D20Roller> {
                 textAlign: TextAlign.center,
               ),
               actions: <Widget>[
-                TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+                Semantics(
+                  label: 'Cancel Button',
+                  child: TextButton(
+                    child: const Text('Cancel'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
                 ),
               ],
             );
@@ -170,26 +176,32 @@ class _D20RollerState extends State<D20Roller> {
                                 },
                                 child: Text(
                                     '${e.description}: ${e.numberOfDice}d${e.dieSize} ${e.symbol} ${e.bonus}'))),
-                        IconButton(
-                          icon: const Icon(Icons.delete),
-                          tooltip: 'Delete',
-                          onPressed: () {
-                            _deleteRoll(e);
+                        Semantics(
+                          label: 'Delete Roll Button',
+                          child: IconButton(
+                            icon: const Icon(Icons.delete),
+                            tooltip: 'Delete',
+                            onPressed: () {
+                              _deleteRoll(e);
 
-                            Navigator.of(context).pop();
-                            _savedRollsDialog();
-                          },
+                              Navigator.of(context).pop();
+                              _savedRollsDialog();
+                            },
+                          ),
                         )
                       ]))
                   .toList(),
             ),
           ),
           actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+            Semantics(
+              label: 'Cancel Button',
+              child: TextButton(
+                child: const Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
           ],
         );
@@ -276,20 +288,23 @@ class _D20RollerState extends State<D20Roller> {
                   SizedBox(
                       width: 30,
                       height: 30,
-                      child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.all(2)),
-                          onPressed: () {
-                            if (symbol == '+') {
-                              _setSymbol('-');
-                            } else {
-                              _setSymbol('+');
-                            }
-                          },
-                          child: Text(
-                            symbol,
-                            textAlign: TextAlign.center,
-                          ))),
+                      child: Semantics(
+                        label: 'Plus Minus button, currently $symbol',
+                        child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.all(2)),
+                            onPressed: () {
+                              if (symbol == '+') {
+                                _setSymbol('-');
+                              } else {
+                                _setSymbol('+');
+                              }
+                            },
+                            child: Text(
+                              symbol,
+                              textAlign: TextAlign.center,
+                            )),
+                      )),
                   SizedBox(
                       width: 50,
                       child: TextField(
@@ -302,26 +317,35 @@ class _D20RollerState extends State<D20Roller> {
                           decoration: const InputDecoration(
                             border: UnderlineInputBorder(),
                           ))),
-                  OutlinedButton(
-                      onPressed: () {
-                        SavedRoll roll = SavedRoll(
-                            '',
-                            int.parse(numberOfDiceController.text),
-                            currentDie,
-                            symbol,
-                            int.parse(bonusController.text),
-                            extra: extra);
-                        rollD20(roll, widget.addToHistory);
-                      },
-                      child: const Text('Roll')),
-                  OutlinedButton(
-                      onPressed: _saveDialog, child: const Text('Save')),
+                  Semantics(
+                    label: 'Roll Button',
+                    child: OutlinedButton(
+                        onPressed: () {
+                          SavedRoll roll = SavedRoll(
+                              '',
+                              int.parse(numberOfDiceController.text),
+                              currentDie,
+                              symbol,
+                              int.parse(bonusController.text),
+                              extra: extra);
+                          rollD20(roll, widget.addToHistory);
+                        },
+                        child: const Text('Roll')),
+                  ),
+                  Semantics(
+                    label: 'Save Roll Button',
+                    child: OutlinedButton(
+                        onPressed: _saveDialog, child: const Text('Save')),
+                  ),
                 ],
               ),
             )),
-        OutlinedButton(
-            onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
-            child: const Text('Show Saved Rolls')),
+        Semantics(
+          label: 'Show Saved Rolls Button',
+          child: OutlinedButton(
+              onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
+              child: const Text('Show Saved Rolls')),
+        ),
       ],
     );
   }

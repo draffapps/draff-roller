@@ -24,28 +24,31 @@ class _ReliableDropDownState extends State<ReliableDropDown> {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: dropdownValue,
-      elevation: 16,
-      style: TextStyle(color: Theme.of(context).colorScheme.primary),
-      underline: Container(
-        height: 2,
-        color: Theme.of(context).colorScheme.onPrimary,
+    return Semantics(
+      label: 'Reliable Drop Downn',
+      child: DropdownButton<String>(
+        value: dropdownValue,
+        elevation: 16,
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        underline: Container(
+          height: 2,
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
+        onChanged: (String? value) {
+          if (value == null) return;
+          // This is called when the user selects an item.
+          setState(() {
+            dropdownValue = value;
+          });
+          widget.notifyParent(value);
+        },
+        items: reliableRolls.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
       ),
-      onChanged: (String? value) {
-        if (value == null) return;
-        // This is called when the user selects an item.
-        setState(() {
-          dropdownValue = value;
-        });
-        widget.notifyParent(value);
-      },
-      items: reliableRolls.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
     );
   }
 }
@@ -63,28 +66,31 @@ class _DullDropDownState extends State<DullDropDown> {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: dropdownValue,
-      elevation: 16,
-      style: TextStyle(color: Theme.of(context).colorScheme.primary),
-      underline: Container(
-        height: 2,
-        color: Theme.of(context).colorScheme.onPrimary,
+    return Semantics(
+      label: 'Dull Drop Down',
+      child: DropdownButton<String>(
+        value: dropdownValue,
+        elevation: 16,
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        underline: Container(
+          height: 2,
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
+        onChanged: (String? value) {
+          if (value == null) return;
+          // This is called when the user selects an item.
+          setState(() {
+            dropdownValue = value;
+          });
+          widget.notifyParent(value);
+        },
+        items: dullRolls.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
       ),
-      onChanged: (String? value) {
-        if (value == null) return;
-        // This is called when the user selects an item.
-        setState(() {
-          dropdownValue = value;
-        });
-        widget.notifyParent(value);
-      },
-      items: dullRolls.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
     );
   }
 }
@@ -202,21 +208,24 @@ class _SubversionRollerState extends State<SubversionRoller>
             ),
           ),
           actions: <Widget>[
-            TextButton(
-              child: const Text('Save'),
-              onPressed: () {
-                if (nameController.text.isEmpty) return;
-                SavedRoll roll = SavedRoll(
-                    nameController.text,
-                    int.parse(numberOfDiceController.text),
-                    6,
-                    symbol == 'Reli' ? '' : symbol,
-                    int.parse(bonusController.text),
-                    extra: extra == 'Dull' ? '' : extra);
-                _addSavedRoll(roll);
-                _roll(roll);
-                Navigator.of(context).pop();
-              },
+            Semantics(
+              label: 'Save Button',
+              child: TextButton(
+                child: const Text('Save'),
+                onPressed: () {
+                  if (nameController.text.isEmpty) return;
+                  SavedRoll roll = SavedRoll(
+                      nameController.text,
+                      int.parse(numberOfDiceController.text),
+                      6,
+                      symbol == 'Reli' ? '' : symbol,
+                      int.parse(bonusController.text),
+                      extra: extra == 'Dull' ? '' : extra);
+                  _addSavedRoll(roll);
+                  _roll(roll);
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
           ],
         );
@@ -236,11 +245,14 @@ class _SubversionRollerState extends State<SubversionRoller>
                 textAlign: TextAlign.center,
               ),
               actions: <Widget>[
-                TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+                Semantics(
+                  label: 'Cancel Button',
+                  child: TextButton(
+                    child: const Text('Cancel'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
                 ),
               ],
             );
@@ -268,26 +280,32 @@ class _SubversionRollerState extends State<SubversionRoller>
                                 },
                                 child: Text(
                                     '${e.description}: ${e.numberOfDice}d6+${e.bonus}${e.symbol != '' ? ' Reli: ${e.symbol}' : ''}${e.extra != '' ? ' Dull: ${e.extra}' : ''}'))),
-                        IconButton(
-                          icon: const Icon(Icons.delete),
-                          tooltip: 'Delete',
-                          onPressed: () {
-                            _deleteRoll(e);
+                        Semantics(
+                          label: 'Delete Button',
+                          child: IconButton(
+                            icon: const Icon(Icons.delete),
+                            tooltip: 'Delete',
+                            onPressed: () {
+                              _deleteRoll(e);
 
-                            Navigator.of(context).pop();
-                            _savedRollsDialog();
-                          },
+                              Navigator.of(context).pop();
+                              _savedRollsDialog();
+                            },
+                          ),
                         )
                       ]))
                   .toList(),
             ),
           ),
           actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+            Semantics(
+              label: 'Cancel Button',
+              child: TextButton(
+                child: const Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
           ],
         );
@@ -341,26 +359,35 @@ class _SubversionRollerState extends State<SubversionRoller>
                   DullDropDown(
                     notifyParent: _setDull,
                   ),
-                  OutlinedButton(
-                      onPressed: () {
-                        SavedRoll roll = SavedRoll(
-                            '',
-                            int.parse(numberOfDiceController.text),
-                            6,
-                            symbol == 'Reli' ? '' : symbol,
-                            int.parse(bonusController.text),
-                            extra: extra == 'Dull' ? '' : extra);
-                        _roll(roll);
-                      },
-                      child: const Text('Roll')),
-                  OutlinedButton(
-                      onPressed: _saveDialog, child: const Text('Save')),
+                  Semantics(
+                    label: 'Roll Button',
+                    child: OutlinedButton(
+                        onPressed: () {
+                          SavedRoll roll = SavedRoll(
+                              '',
+                              int.parse(numberOfDiceController.text),
+                              6,
+                              symbol == 'Reli' ? '' : symbol,
+                              int.parse(bonusController.text),
+                              extra: extra == 'Dull' ? '' : extra);
+                          _roll(roll);
+                        },
+                        child: const Text('Roll')),
+                  ),
+                  Semantics(
+                    label: 'Save Button',
+                    child: OutlinedButton(
+                        onPressed: _saveDialog, child: const Text('Save')),
+                  ),
                 ],
               ),
             )),
-        OutlinedButton(
-            onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
-            child: const Text('Show Saved Rolls')),
+        Semantics(
+          label: 'Show Saved Rolls Button',
+          child: OutlinedButton(
+              onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
+              child: const Text('Show Saved Rolls')),
+        ),
       ],
     );
   }

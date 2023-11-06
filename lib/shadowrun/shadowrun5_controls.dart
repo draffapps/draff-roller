@@ -105,17 +105,20 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller>
             ),
           ),
           actions: <Widget>[
-            TextButton(
-              child: const Text('Save'),
-              onPressed: () {
-                if (nameController.text.isEmpty) return;
-                SavedRoll roll = SavedRoll(nameController.text,
-                    int.parse(numberOfDiceController.text), 6, '', 0,
-                    extra: '');
-                _addSavedRoll(roll);
-                priorRoll = _roll(roll);
-                Navigator.of(context).pop();
-              },
+            Semantics(
+              label: 'Save Roll Button',
+              child: TextButton(
+                child: const Text('Save'),
+                onPressed: () {
+                  if (nameController.text.isEmpty) return;
+                  SavedRoll roll = SavedRoll(nameController.text,
+                      int.parse(numberOfDiceController.text), 6, '', 0,
+                      extra: '');
+                  _addSavedRoll(roll);
+                  priorRoll = _roll(roll);
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
           ],
         );
@@ -135,11 +138,14 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller>
                 textAlign: TextAlign.center,
               ),
               actions: <Widget>[
-                TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+                Semantics(
+                  label: 'Cancel Button',
+                  child: TextButton(
+                    child: const Text('Cancel'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
                 ),
               ],
             );
@@ -182,11 +188,14 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller>
             ),
           ),
           actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+            Semantics(
+              label: 'Cancel Button',
+              child: TextButton(
+                child: const Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
           ],
         );
@@ -218,48 +227,65 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller>
                           decoration: const InputDecoration(
                             border: UnderlineInputBorder(),
                           ))),
-                  OutlinedButton(
-                      onPressed: () {
-                        SavedRoll roll = SavedRoll('',
-                            int.parse(numberOfDiceController.text), 6, '', 0,
-                            extra: '');
-                        priorRoll = _roll(roll);
-                      },
-                      child: const Text('Roll')),
-                  OutlinedButton(
-                      onPressed: () {
-                        SavedRoll roll = SavedRoll('',
-                            int.parse(numberOfDiceController.text), 6, '', 0,
-                            extra: '<');
-                        priorRoll = _roll(roll);
-                      },
-                      child: const Text('Pre')),
-                  OutlinedButton(
-                    onPressed: priorRoll.isEmpty ||
-                            priorRoll.where((element) => element == 1).length /
-                                    priorRoll.length >
-                                .5
-                        ? null
-                        : () {
-                            SavedRoll roll = SavedRoll(
-                                '',
-                                int.parse(numberOfDiceController.text),
-                                6,
-                                '',
-                                0,
-                                extra: '');
-                            priorRoll = _roll(roll, priorRoll: priorRoll);
-                          },
-                    child: const Text('Post'),
+                  Semantics(
+                    label: 'Roll Button',
+                    child: OutlinedButton(
+                        onPressed: () {
+                          SavedRoll roll = SavedRoll('',
+                              int.parse(numberOfDiceController.text), 6, '', 0,
+                              extra: '');
+                          priorRoll = _roll(roll);
+                        },
+                        child: const Text('Roll')),
                   ),
-                  OutlinedButton(
-                      onPressed: _saveDialog, child: const Text('Save')),
+                  Semantics(
+                    label: 'Pre Edge Roll Button',
+                    child: OutlinedButton(
+                        onPressed: () {
+                          SavedRoll roll = SavedRoll('',
+                              int.parse(numberOfDiceController.text), 6, '', 0,
+                              extra: '<');
+                          priorRoll = _roll(roll);
+                        },
+                        child: const Text('Pre')),
+                  ),
+                  Semantics(
+                    label: 'Post Edge Roll Button',
+                    child: OutlinedButton(
+                      onPressed: priorRoll.isEmpty ||
+                              priorRoll
+                                          .where((element) => element == 1)
+                                          .length /
+                                      priorRoll.length >
+                                  .5
+                          ? null
+                          : () {
+                              SavedRoll roll = SavedRoll(
+                                  '',
+                                  int.parse(numberOfDiceController.text),
+                                  6,
+                                  '',
+                                  0,
+                                  extra: '');
+                              priorRoll = _roll(roll, priorRoll: priorRoll);
+                            },
+                      child: const Text('Post'),
+                    ),
+                  ),
+                  Semantics(
+                    label: 'Save Button',
+                    child: OutlinedButton(
+                        onPressed: _saveDialog, child: const Text('Save')),
+                  ),
                 ],
               ),
             )),
-        OutlinedButton(
-            onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
-            child: const Text('Show Saved Rolls')),
+        Semantics(
+          label: 'Show Saved Rolls Button',
+          child: OutlinedButton(
+              onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
+              child: const Text('Show Saved Rolls')),
+        ),
       ],
     );
   }

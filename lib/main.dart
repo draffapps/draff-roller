@@ -223,6 +223,7 @@ class _oddRollerState extends State<oddRoller> {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       floatingActionButton: FloatingActionButton(
+        tooltip: 'Toggle mute, currently: ${muted ? 'muted' : 'unmuted'}',
         onPressed: () async {
           bool newState = !muted;
           final SharedPreferences prefs = await SharedPreferences.getInstance();

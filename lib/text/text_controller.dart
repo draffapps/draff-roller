@@ -93,16 +93,19 @@ class _TextControllerState extends State<TextController> {
             ),
           ),
           actions: <Widget>[
-            TextButton(
-              child: const Text('Save'),
-              onPressed: () {
-                if (nameController.text.isEmpty) return;
-                SavedRoll roll = SavedRoll(nameController.text, 0, 0, '', 0,
-                    extra: textController.text);
-                _addSavedRoll(roll);
-                rollText(roll, widget.addToHistory);
-                Navigator.of(context).pop();
-              },
+            Semantics(
+              label: 'Save Button',
+              child: TextButton(
+                child: const Text('Save'),
+                onPressed: () {
+                  if (nameController.text.isEmpty) return;
+                  SavedRoll roll = SavedRoll(nameController.text, 0, 0, '', 0,
+                      extra: textController.text);
+                  _addSavedRoll(roll);
+                  rollText(roll, widget.addToHistory);
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
           ],
         );
@@ -122,11 +125,14 @@ class _TextControllerState extends State<TextController> {
                 textAlign: TextAlign.center,
               ),
               actions: <Widget>[
-                TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+                Semantics(
+                  label: 'Cancel Button',
+                  child: TextButton(
+                    child: const Text('Cancel'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
                 ),
               ],
             );
@@ -168,11 +174,14 @@ class _TextControllerState extends State<TextController> {
             ),
           ),
           actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+            Semantics(
+              label: 'Cancel Button',
+              child: TextButton(
+                child: const Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
           ],
         );
@@ -212,11 +221,14 @@ class _TextControllerState extends State<TextController> {
                       ..onTap = () => _launchUrl())
               ]))),
           actions: <Widget>[
-            TextButton(
-              child: const Text('Close'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+            Semantics(
+              label: 'Close Button',
+              child: TextButton(
+                child: const Text('Close'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
           ],
         );
@@ -245,23 +257,35 @@ class _TextControllerState extends State<TextController> {
                       ),
                     ),
                   ),
-                  OutlinedButton(
-                      onPressed: () {
-                        SavedRoll roll = SavedRoll('', 0, 0, '', 0,
-                            extra: textController.text);
-                        rollText(roll, widget.addToHistory);
-                      },
-                      child: const Text('Roll')),
-                  OutlinedButton(
-                      onPressed: _saveDialog, child: const Text('Save')),
-                  OutlinedButton(
-                      onPressed: _helpDialog, child: const Text('Help')),
+                  Semantics(
+                    label: 'Roll Button',
+                    child: OutlinedButton(
+                        onPressed: () {
+                          SavedRoll roll = SavedRoll('', 0, 0, '', 0,
+                              extra: textController.text);
+                          rollText(roll, widget.addToHistory);
+                        },
+                        child: const Text('Roll')),
+                  ),
+                  Semantics(
+                    label: 'Save Button',
+                    child: OutlinedButton(
+                        onPressed: _saveDialog, child: const Text('Save')),
+                  ),
+                  Semantics(
+                    label: 'Help Button',
+                    child: OutlinedButton(
+                        onPressed: _helpDialog, child: const Text('Help')),
+                  ),
                 ],
               ),
             )),
-        OutlinedButton(
-            onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
-            child: const Text('Show Saved Rolls')),
+        Semantics(
+          label: 'Show Saved Rolls Button',
+          child: OutlinedButton(
+              onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
+              child: const Text('Show Saved Rolls')),
+        ),
       ],
     );
   }
