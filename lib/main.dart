@@ -20,19 +20,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'odd roller',
+      title: 'draff roller',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         useMaterial3: true,
       ),
-      home: const oddRoller(title: 'Just keep on rollin baby'),
+      home: const draffRoller(title: 'Just keep on rollin baby'),
     );
   }
 }
 
 // ignore: camel_case_types
-class oddRoller extends StatefulWidget {
-  const oddRoller({super.key, required this.title});
+class draffRoller extends StatefulWidget {
+  const draffRoller({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -46,13 +46,13 @@ class oddRoller extends StatefulWidget {
   final String title;
 
   @override
-  State<oddRoller> createState() => _oddRollerState();
+  State<draffRoller> createState() => _draffRollerState();
 }
 
 enum TtsState { playing, stopped, paused, continued }
 
 // ignore: camel_case_types
-class _oddRollerState extends State<oddRoller> {
+class _draffRollerState extends State<draffRoller> {
   late FlutterTts flutterTts;
   final List<Widget> history = [];
   int currentRoller = 0;
