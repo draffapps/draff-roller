@@ -33,7 +33,8 @@ void rollD20(SavedRoll roll, Function addToHistory) {
   rollSpeech +=
       '${rollSpeech.isNotEmpty ? ' ' : ''} ${numberOfDice}d$dieSize ${symbol == '+' ? 'plus' : 'minus'} $bonus rolls ';
 
-  String rollInfo = ': ';
+  entry.add(const Text(': '));
+  String rollInfo = '';
   int sum = bonus;
   if (symbol == '-') sum *= -1;
   if (extra != 'A' && extra != 'D') {
@@ -83,8 +84,8 @@ void rollD20(SavedRoll roll, Function addToHistory) {
       )));
 
   addToHistory(
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      Wrap(
+        alignment: WrapAlignment.center,
         children: entry,
       ),
       rollSpeech);

@@ -278,7 +278,6 @@ class _D20RollerState extends State<D20Roller> {
                         border: const UnderlineInputBorder(),
                         enabled: extra.isEmpty,
                       ),
-                      readOnly: extra.isEmpty,
                       enableInteractiveSelection: extra.isEmpty,
                     ),
                   ),
