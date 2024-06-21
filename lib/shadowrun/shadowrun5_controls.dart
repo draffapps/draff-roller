@@ -8,8 +8,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../saved_roll.dart';
 
 class Shadowrun5Roller extends StatefulWidget {
-  const Shadowrun5Roller({super.key, required this.addToHistory});
+  const Shadowrun5Roller(
+      {super.key, required this.addToHistory, required this.clearHistory});
   final Function(Wrap, String) addToHistory;
+  final Function() clearHistory;
 
   @override
   State<Shadowrun5Roller> createState() => _Shadowrun5RollerState();
@@ -18,7 +20,6 @@ class Shadowrun5Roller extends StatefulWidget {
 // ignore: camel_case_types
 class _Shadowrun5RollerState extends State<Shadowrun5Roller>
     with TickerProviderStateMixin {
-  final List<Row> history = [];
   List<SavedRoll> savedRolls = [];
 
   List<int> priorRoll = [];
@@ -280,12 +281,20 @@ class _Shadowrun5RollerState extends State<Shadowrun5Roller>
                 ],
               ),
             )),
-        Semantics(
-          label: 'Show Saved Rolls Button',
-          child: OutlinedButton(
-              onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
-              child: const Text('Show Saved Rolls')),
-        ),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Semantics(
+            label: 'Show Saved Rolls Button',
+            child: OutlinedButton(
+                onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
+                child: const Text('Show Saved Rolls')),
+          ),
+          Semantics(
+            label: 'Clear History Button',
+            child: OutlinedButton(
+                onPressed: widget.clearHistory,
+                child: const Text('Clear History')),
+          ),
+        ])
       ],
     );
   }

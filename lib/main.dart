@@ -202,22 +202,32 @@ class _draffRollerState extends State<draffRoller> {
     }
   }
 
+  void _clearHistory() async {
+    setState(() {
+      history.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget rollWidget;
 
     switch (currentRoller) {
       case 1:
-        rollWidget = Shadowrun5Roller(addToHistory: _addToHistory);
+        rollWidget = Shadowrun5Roller(
+            addToHistory: _addToHistory, clearHistory: _clearHistory);
         break;
       case 2:
-        rollWidget = SubversionRoller(addToHistory: _addToHistory);
+        rollWidget = SubversionRoller(
+            addToHistory: _addToHistory, clearHistory: _clearHistory);
         break;
       case 3:
-        rollWidget = TextController(addToHistory: _addToHistory);
+        rollWidget = TextController(
+            addToHistory: _addToHistory, clearHistory: _clearHistory);
         break;
       default:
-        rollWidget = D20Roller(addToHistory: _addToHistory);
+        rollWidget =
+            D20Roller(addToHistory: _addToHistory, clearHistory: _clearHistory);
     }
 
     return Scaffold(

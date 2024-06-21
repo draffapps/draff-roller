@@ -9,8 +9,10 @@ import 'package:url_launcher/url_launcher.dart';
 import '../saved_roll.dart';
 
 class TextController extends StatefulWidget {
-  const TextController({super.key, required this.addToHistory});
+  const TextController(
+      {super.key, required this.addToHistory, required this.clearHistory});
   final Function(Wrap, String) addToHistory;
+  final Function() clearHistory;
 
   @override
   State<TextController> createState() => _TextControllerState();
@@ -280,12 +282,20 @@ class _TextControllerState extends State<TextController> {
                 ],
               ),
             )),
-        Semantics(
-          label: 'Show Saved Rolls Button',
-          child: OutlinedButton(
-              onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
-              child: const Text('Show Saved Rolls')),
-        ),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Semantics(
+            label: 'Show Saved Rolls Button',
+            child: OutlinedButton(
+                onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
+                child: const Text('Show Saved Rolls')),
+          ),
+          Semantics(
+            label: 'Clear History Button',
+            child: OutlinedButton(
+                onPressed: widget.clearHistory,
+                child: const Text('Clear History')),
+          ),
+        ])
       ],
     );
   }

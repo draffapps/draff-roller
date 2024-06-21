@@ -96,8 +96,10 @@ class _DullDropDownState extends State<DullDropDown> {
 }
 
 class SubversionRoller extends StatefulWidget {
-  const SubversionRoller({super.key, required this.addToHistory});
+  const SubversionRoller(
+      {super.key, required this.addToHistory, required this.clearHistory});
   final Function(Wrap, String) addToHistory;
+  final Function() clearHistory;
 
   @override
   State<SubversionRoller> createState() => _SubversionRollerState();
@@ -382,12 +384,20 @@ class _SubversionRollerState extends State<SubversionRoller>
                 ],
               ),
             )),
-        Semantics(
-          label: 'Show Saved Rolls Button',
-          child: OutlinedButton(
-              onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
-              child: const Text('Show Saved Rolls')),
-        ),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Semantics(
+            label: 'Show Saved Rolls Button',
+            child: OutlinedButton(
+                onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
+                child: const Text('Show Saved Rolls')),
+          ),
+          Semantics(
+            label: 'Clear History Button',
+            child: OutlinedButton(
+                onPressed: widget.clearHistory,
+                child: const Text('Clear History')),
+          ),
+        ])
       ],
     );
   }

@@ -8,8 +8,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../saved_roll.dart';
 
 class D20Roller extends StatefulWidget {
-  const D20Roller({super.key, required this.addToHistory});
+  const D20Roller(
+      {super.key, required this.addToHistory, required this.clearHistory});
   final Function(Wrap, String) addToHistory;
+  final Function() clearHistory;
 
   @override
   State<D20Roller> createState() => _D20RollerState();
@@ -339,12 +341,20 @@ class _D20RollerState extends State<D20Roller> {
                 ],
               ),
             )),
-        Semantics(
-          label: 'Show Saved Rolls Button',
-          child: OutlinedButton(
-              onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
-              child: const Text('Show Saved Rolls')),
-        ),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Semantics(
+            label: 'Show Saved Rolls Button',
+            child: OutlinedButton(
+                onPressed: savedRolls.isEmpty ? null : _savedRollsDialog,
+                child: const Text('Show Saved Rolls')),
+          ),
+          Semantics(
+            label: 'Clear History Button',
+            child: OutlinedButton(
+                onPressed: widget.clearHistory,
+                child: const Text('Clear History')),
+          ),
+        ])
       ],
     );
   }
