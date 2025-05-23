@@ -16,6 +16,9 @@ void rollSubversion(
   int dull = extra.isEmpty ? 6 : int.parse(extra);
   String rollSpeech = '';
 
+  dull = dull - 3 + numberOfDice;
+  numberOfDice = 3;
+
   if (description != '') {
     entry.add(Text(
       description,

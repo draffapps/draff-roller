@@ -274,7 +274,7 @@ class _draffRollerState extends State<draffRoller> {
                     label: 'Shadowrun',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(CustomIcons.horse_head),
+                    icon: Icon(CustomIcons.fug),
                     label: 'Subversion',
                   ),
                   BottomNavigationBarItem(
