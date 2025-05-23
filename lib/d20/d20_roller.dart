@@ -44,7 +44,7 @@ void rollD20(SavedRoll roll, Function addToHistory) {
       rollInfo += '$dieRoll ';
       sum += dieRoll;
     }
-    rollSpeech += '${rollInfo.substring(2)} ';
+    rollSpeech += '$rollInfo ';
   } else {
     int dieRoll = getDie(dieSize);
     int dieRoll2 = getDie(dieSize);
