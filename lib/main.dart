@@ -89,14 +89,6 @@ class _draffRollerState extends State<draffRoller> {
       });
     });
 
-    if (isAndroid) {
-      flutterTts.setInitHandler(() {
-        setState(() {
-          print("TTS Initialized");
-        });
-      });
-    }
-
     flutterTts.setCompletionHandler(() {
       setState(() {
         print("Complete");
@@ -194,7 +186,7 @@ class _draffRollerState extends State<draffRoller> {
     });
     if (rollSpeech.isNotEmpty && !muted) {
       await flutterTts.setVolume(.5);
-      await flutterTts.setSpeechRate(1);
+      await flutterTts.setSpeechRate(.75);
       await flutterTts.setPitch(.5);
       print('playing');
 
@@ -274,7 +266,7 @@ class _draffRollerState extends State<draffRoller> {
                     label: 'Shadowrun',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(CustomIcons.horse_head),
+                    icon: Icon(CustomIcons.fug),
                     label: 'Subversion',
                   ),
                   BottomNavigationBarItem(
